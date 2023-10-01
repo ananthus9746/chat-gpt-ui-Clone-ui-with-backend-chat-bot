@@ -86,6 +86,35 @@ function App() {
     }
   }, [previousChats]);
 
+  //=========MESSAGE EFFECT====================//
+
+  const [displayResponse, setDisplayResponse] = useState("");
+  const [completedTyping, setCompletedTyping] = useState(false);
+
+  useEffect(() => {
+    if (!previousChats?.length) {
+      return;
+    }
+
+    setCompletedTyping(false);
+
+    let i = 0;
+    const stringResponse = previousChats[previousChats.length - 1].content;
+
+    const intervalId = setInterval(() => {
+      setDisplayResponse(stringResponse.slice(0, i));
+
+      i++;
+
+      if (i > stringResponse.length) {
+        clearInterval(intervalId);
+        setCompletedTyping(true);
+      }
+    }, 20);
+
+    return () => clearInterval(intervalId);
+  }, [previousChats]);
+
   return (
     <>
       <div className="app">
@@ -109,21 +138,48 @@ function App() {
 
           <ul className="feed" ref={messageContainerRef}>
             {/* MESSAGE FEED */}
-            {currentChat.map((chatMessage, index) => (
-              <li key={index}>
-                {chatMessage.role === "user" ? (
-                  <div className="user">
-                    <FaUserAlt />
-                    <p>{chatMessage.content}</p>
-                  </div>
-                ) : (
-                  <div className="bot">
-                    <FaRobot />
-                    <p>{chatMessage.content}</p>
-                  </div>
-                )}
-              </li>
-            ))}
+            <div className="max-h-0">
+              {currentChat.map((chatMessage, index) => (
+                <div key={index}>
+                  {chatMessage.role === "user" && (
+                    <div className="chat chat-end user">
+                      <span className="chat-bubble">{chatMessage.content}</span>
+                    </div>
+                  )}
+                  {index === currentChat.length - 1 &&
+                    chatMessage.role === "assistant" && (
+                      <div className="chat chat-start bot">
+                        <span className="chat-bubble">
+                          {displayResponse}
+                          {!completedTyping && (
+                            <svg
+                              viewBox="8 4 8 16"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="cursor"
+                            >
+                              <rect
+                                x="10"
+                                y="6"
+                                width="4"
+                                height="12"
+                                fill="#fff"
+                              />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    )}
+                  {chatMessage.role === "assistant" &&
+                    index !== currentChat.length - 1 && (
+                      <div className="chat chat-start bot">
+                        <span className="chat-bubble">
+                          {chatMessage.content}
+                        </span>
+                      </div>
+                    )}
+                </div>
+              ))}
+            </div>
           </ul>
 
           {/* USER INPUT */}

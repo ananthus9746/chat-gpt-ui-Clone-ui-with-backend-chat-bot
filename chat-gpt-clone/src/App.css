@@ -48,12 +48,14 @@ body {
   width: 100%;
   padding: 10px;
   border-radius: 10px;
+  margin-bottom: 20px;
 }
 .bot{
   background-color: rgb(3, 103, 3);
   width: 100%;
   padding: 10px;
   border-radius: 10px;
+  margin-bottom: 20px;
 
 }
 .feed li {
@@ -157,4 +159,23 @@ input:focus {
 .email {
   color: rgb(54, 105, 2);
   font-weight: 500;
+}
+
+
+.cursor {
+  display: inline-block;
+  width: 1ch;
+  animation: flicker 0.5s infinite;
+  margin-bottom: 4px;
+}
+@keyframes flicker {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
